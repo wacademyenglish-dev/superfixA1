@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WOLF LABS | Main Series: Superlatives A1</title>
+    <!-- Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- WOLF LABS SUPREME ENGINE (CHAMPIONS EDITION) --- */
+        :root {
+            --bg-base: #0f172a; 
+            --brand-main: #fbbf24; 
+            --accent: #3b82f6; 
+            --accent-glow: rgba(251, 191, 36, 0.5);
+            --correct: #10b981; 
+            --incorrect: #ef4444; 
+            --text-main: #f8fafc;
+            --text-dim: #cbd5e1;
+            --glass-bg: rgba(15, 23, 42, 0.85); 
+            --glass-border: rgba(251, 191, 36, 0.3); 
+            --font-display: 'Montserrat', sans-serif;
+            --font-body: 'Outfit', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        button, input, select, textarea { font-family: var(--font-body); outline: none; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow: hidden;
+            height: 100vh; width: 100vw;
+            display: flex; flex-direction: column;
+            position: fixed; 
+            perspective: 1000px;
+            transition: box-shadow 0.3s;
+        }
+
+        /* CORRECTION MODE EFFECT */
+        .correction-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 9998; box-shadow: inset 0 0 0 rgba(239, 68, 68, 0); transition: box-shadow 0.4s ease; }
+        body.correction-mode .correction-overlay { box-shadow: inset 0 0 150px 20px rgba(239, 68, 68, 0.6); }
+
+        /* --- IMMERSIVE BACKGROUND --- */
+        .ambient-orbs { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+        .bg-image {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1542652735873-fb2825bac6e2?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover; background-position: center;
+            opacity: 0.15; z-index: 1; filter: grayscale(20%) brightness(0.5) contrast(1.2);
+        }
+        .bg-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, rgba(15,23,42,0.95) 100%);
+            z-index: 2;
+        }
+        .orb { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.2; z-index: 3; }
+        .orb-1 { width: 60vw; height: 60vw; background: var(--brand-main); top: -20%; left: -20%; }
+        .orb-2 { width: 50vw; height: 50vw; background: var(--accent); bottom: -10%; right: -10%; }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 30px; height: 75px;
+            background: rgba(15,23,42,0.8); backdrop-filter: blur(30px);
+            position: fixed; top: 20px; left: 2%; width: 96%; z-index: 100;
+            border: 1px solid rgba(255,255,255,0.05); border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .logo { color: #fff; font-family: var(--font-display); font-size: 1.2rem; font-weight: 900; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;}
+        .logo i { color: var(--brand-main); }
+        .logo span { background: var(--brand-main); color: #000; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; }
+        
+        .nav-controls { display: flex; gap: 10px; align-items: center;}
+        .teacher-tool {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: #cbd5e1; width: 40px; height: 40px; border-radius: 12px; cursor: pointer;
+            font-size: 1rem; transition: 0.3s; display: flex; align-items: center; justify-content: center; position: relative;
+        }
+        .teacher-tool:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .teacher-tool.active-tool { background: var(--brand-main); color: #000; border-color: var(--brand-main); box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* --- MAIN CONTAINER --- */
+        .main-container { flex: 1; position: relative; z-index: 10; padding: 110px 5% 100px 5%; display: flex; align-items: center; justify-content: center; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);}
+        .slide { height: 100%; width: 100%; max-width: 1100px; display: none; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transform: translateY(20px); transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .slide.active { display: flex; opacity: 1; transform: translateY(0); }
+
+        .glass-panel {
+            background: var(--glass-bg); backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border); border-top: 3px solid var(--brand-main);
+            padding: 50px 60px; border-radius: 30px; width: 100%; max-height: 82vh; 
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8), inset 0 20px 50px rgba(255,255,255,0.02);
+            display: flex; flex-direction: column; position: relative; overflow-y: auto; scrollbar-width: none;
+            align-items: center;
+        }
+        .glass-panel::-webkit-scrollbar { display: none; }
+        .glass-panel > * { flex-shrink: 0; }
+
+        /* --- TEACHER GUIDE (TG) STYLES --- */
+        .tg-card { background: rgba(0,0,0,0.4); border-radius: 15px; padding: 20px; text-align: left; margin: 10px 0; border-left: 4px solid var(--brand-main); width: 100%; }
+        .tg-step { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; font-size: 1.1rem; line-height: 1.5; }
+        .tg-step i { color: var(--brand-main); margin-top: 4px; }
+
+        /* --- TYPOGRAPHY --- */
+        h1 { font-family: var(--font-display); font-size: 4.5rem; color: #fff; line-height: 1; margin-bottom: 20px; text-align: center; letter-spacing: -2px; text-transform: uppercase;}
+        h2 { font-family: var(--font-display); font-size: 2.2rem; color: var(--brand-main); margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 15px; text-transform: uppercase;}
+        p { font-size: 1.3rem; color: var(--text-dim); line-height: 1.6; text-align: center; margin-bottom: 25px;}
+
+        /* --- INTERACTIVE ELEMENTS --- */
+        .btn-start { 
+            padding: 20px 45px; border: none; border-radius: 15px; font-weight: 800; font-size: 1.2rem; text-transform: uppercase; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 12px; background: var(--brand-main); color: #000; box-shadow: 0 10px 30px var(--accent-glow);
+        }
+        .btn-start:hover { transform: translateY(-5px); filter: brightness(1.1); box-shadow: 0 15px 40px rgba(251, 191, 36, 0.6); }
+
+        .input-name { width: 100%; max-width: 400px; padding: 18px 30px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; font-size: 1.4rem; text-align: center; margin-bottom: 30px; transition: 0.3s;}
+        .input-name:focus { border-color: var(--brand-main); box-shadow: 0 0 25px var(--accent-glow); }
+
+        /* FIXED VIDEO WRAPPER */
+        .video-wrapper { position: relative; width: 100%; max-width: 850px; aspect-ratio: 16/9; background: #000; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.8); margin-bottom: 25px; z-index: 50; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; pointer-events: auto !important; z-index: 60; }
+        
+        .speaking-hub { margin-top: 30px; padding: 30px; background: rgba(0,0,0,0.5); border-radius: 20px; border-left: 5px solid var(--accent); text-align: left; width: 100%; display: none; animation: popIn 0.5s ease; position: relative;}
+        
+        /* CLICKABLE SPEAKING STARTERS */
+        .starter-reveal-btn {
+            background: rgba(59, 130, 246, 0.1); border: 1px dashed var(--accent); color: var(--accent);
+            padding: 12px 24px; border-radius: 50px; cursor: pointer; transition: 0.3s; font-family: var(--font-code);
+            display: inline-flex; align-items: center; gap: 10px; margin-top: 15px; font-weight: 700; font-size: 1rem;
+        }
+        .starter-reveal-btn:hover { background: var(--accent); color: #fff; box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+        .starter-content {
+            display: none; margin-top: 15px; padding: 20px; background: rgba(0, 0, 0, 0.5); 
+            border-left: 4px solid var(--brand-main); border-radius: 12px; animation: popIn 0.4s ease-out forwards;
+        }
+        .starter-content.active { display: flex; flex-direction: column; gap: 8px; }
+        .starter-title { font-size: 0.8rem; color: var(--brand-main); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 1px; font-weight: 900; margin-bottom: 5px; }
+        .starter-phrase { font-family: var(--font-code); font-size: 1.4rem; color: #fff; font-weight: bold;}
+        
+        @keyframes popIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Games */
+        .ww-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 20px;}
+        .ww-box { width: 160px; height: 160px; background: #1e293b; border-radius: 20px; border: 2px solid var(--glass-border); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; }
+        .ww-box:hover { border-color: var(--brand-main); transform: translateY(-10px); background: #283548; box-shadow: 0 10px 20px var(--accent-glow);}
+        .ww-box i { font-size: 3rem; color: var(--brand-main); margin-bottom: 10px; }
+        .ww-box.opened { opacity: 0.2; pointer-events: none; }
+
+        /* Grammar Sandbox */
+        .grammar-switch { display: flex; justify-content: center; gap: 20px; margin-bottom: 25px; flex-wrap: wrap; width: 100%; max-width: 900px; margin-inline: auto;}
+        .switch-btn { background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.2); color: white; padding: 15px 40px; border-radius: 50px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: 0.3s; font-family: var(--font-code); box-shadow: 0 8px 20px rgba(0,0,0,0.3);}
+        .switch-btn.active { background: var(--brand-main); color: #000; border-color: var(--brand-main); box-shadow: 0 0 30px var(--accent-glow); transform: scale(1.05);}
+        .sandbox-display { background: rgba(0,0,0,0.5); padding: 50px; border-radius: 24px; border-left: 6px solid var(--brand-main); min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset 0 0 30px rgba(0,0,0,0.6); text-align: center; width: 100%; max-width: 900px; margin-inline: auto;}
+
+        /* Syntax Builder */
+        .drop-zone { min-height: 100px; border: 2px dashed rgba(255,255,255,0.2); border-radius: 20px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; padding: 20px; margin-bottom: 20px; width: 100%; background: rgba(0,0,0,0.2);}
+        .word-chip { padding: 12px 25px; background: #1e293b; border: 1px solid var(--glass-border); border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; color: #fff; font-size: 1.2rem;}
+        .word-chip:hover { background: var(--brand-main); color: #000; border-color: var(--brand-main); transform: translateY(-3px);}
+
+        /* FACT CHECKER STAMPS */
+        .fact-checker-card { background: #f8fafc; color: #0f172a; padding: 40px; border-radius: 15px; width: 100%; max-width: 700px; margin: 0 auto 30px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5); font-family: 'Courier New', Courier, monospace;}
+        .fact-checker-card::before { content: 'COMPETITION RESULT'; position: absolute; top: 15px; left: 20px; font-weight: bold; color: #64748b; font-size: 0.9rem;}
+        .fact-statement { font-size: 1.6rem; font-weight: 700; margin-top: 20px; margin-bottom: 30px; line-height: 1.5; text-align: center; font-family: var(--font-body);}
+        .fact-stamp-area { display: flex; gap: 20px; justify-content: center;}
+        .stamp-btn { padding: 15px 30px; font-family: var(--font-display); font-weight: 900; font-size: 1.3rem; border-radius: 10px; cursor: pointer; transition: 0.2s; border: 3px solid; background: transparent; text-transform: uppercase;}
+        .stamp-btn.verified { color: var(--correct); border-color: var(--correct); }
+        .stamp-btn.verified:hover { background: rgba(16, 185, 129, 0.1); transform: scale(1.05);}
+        .stamp-btn.fake { color: var(--incorrect); border-color: var(--incorrect); }
+        .stamp-btn.fake:hover { background: rgba(244, 63, 94, 0.1); transform: scale(1.05);}
+        .stamp-mark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(3) rotate(-15deg); opacity: 0; pointer-events: none; font-family: var(--font-display); font-weight: 900; font-size: 4rem; padding: 10px 20px; border: 6px solid; border-radius: 15px;}
+        .stamp-mark.show-verified { color: var(--correct); border-color: var(--correct); animation: stampDrop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .stamp-mark.show-fake { color: var(--incorrect); border-color: var(--incorrect); animation: stampDrop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        /* The Weighing Scale */
+        .scale-container { display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; max-width: 800px; margin: 0 auto;}
+        .scale-display { background: #000; border: 4px solid #334155; border-radius: 15px; width: 100%; max-width: 500px; padding: 20px; font-family: var(--font-code); font-size: 2.5rem; font-weight: 900; color: var(--brand-main); text-align: center; box-shadow: inset 0 0 20px rgba(251, 191, 36, 0.2); text-transform: uppercase; letter-spacing: 2px; min-height: 100px; display: flex; align-items: center; justify-content: center; transition: opacity 0.2s ease;}
+        .scale-controls { display: flex; gap: 20px; width: 100%; justify-content: center;}
+        .scale-btn { padding: 20px 40px; font-size: 1.5rem; font-family: var(--font-display); font-weight: 900; border-radius: 20px; border: 4px solid var(--glass-border); background: #1e293b; color: #fff; cursor: pointer; transition: 0.2s; flex: 1; max-width: 300px; display: flex; flex-direction: column; align-items: center; gap: 5px;}
+        .scale-btn:hover { background: #334155; transform: translateY(-5px);}
+        .scale-btn:active { transform: scale(0.95); }
+        .scale-baskets { display: flex; gap: 40px; width: 100%; justify-content: center; margin-top: 20px;}
+        .basket { flex: 1; min-height: 150px; border: 3px dashed rgba(255,255,255,0.2); border-radius: 20px; padding: 20px; display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; position: relative; background: rgba(0,0,0,0.3);}
+        .basket::before { content: attr(data-label); position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--bg-base); padding: 0 15px; font-family: var(--font-code); font-weight: 800; color: var(--text-dim); font-size: 1.2rem; white-space: nowrap;}
+        .scale-item-chip { background: var(--brand-main); color: #000; font-family: var(--font-code); font-weight: 700; padding: 8px 15px; border-radius: 8px; font-size: 1.1rem; animation: popIn 0.3s ease-out;}
+
+        /* THE SUPERLATIVE AWARDS */
+        .award-card { background: rgba(0,0,0,0.6); border: 2px solid var(--glass-border); border-radius: 20px; padding: 40px 20px; text-align: center; cursor: pointer; transition: 0.3s; flex: 1; min-width: 250px; display: flex; flex-direction: column; align-items: center; gap: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);}
+        .award-card i { font-size: 4rem; color: var(--text-dim); transition: 0.3s; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));}
+        .award-card h3 { color: #fff; font-family: var(--font-display); font-size: 1.2rem; text-transform: uppercase; margin: 0; letter-spacing: 1px;}
+        .award-card:hover { border-color: var(--brand-main); transform: translateY(-10px); background: #1e293b;}
+        .award-card:hover i { color: var(--brand-main); transform: scale(1.1);}
+        .award-card.granted { background: linear-gradient(145deg, var(--brand-main), #d97706); border-color: var(--brand-main); transform: scale(1.05); box-shadow: 0 15px 40px var(--accent-glow);}
+        .award-card.granted h3, .award-card.granted i { color: #000; filter: none; }
+
+        /* The Podium Ranking */
+        .podium-container { display: flex; gap: 20px; align-items: flex-end; justify-content: center; width: 100%; max-width: 600px; margin: 30px auto; height: 250px;}
+        .podium-step { display: flex; flex-direction: column; align-items: center; width: 120px; border-radius: 10px 10px 0 0; position: relative; transition: 0.3s;}
+        .podium-step.first { height: 200px; background: linear-gradient(0deg, #b45309, #fbbf24); box-shadow: 0 -10px 30px rgba(251,191,36,0.3); z-index: 3;}
+        .podium-step.second { height: 150px; background: linear-gradient(0deg, #475569, #94a3b8); z-index: 2;}
+        .podium-step.third { height: 100px; background: linear-gradient(0deg, #78350f, #d97706); z-index: 1;}
+        .podium-number { font-family: var(--font-display); font-size: 3rem; font-weight: 900; color: rgba(0,0,0,0.5); position: absolute; bottom: 20px;}
+        .podium-drop { position: absolute; top: -70px; width: 100px; height: 60px; border: 2px dashed rgba(255,255,255,0.4); border-radius: 10px; display: flex; align-items: center; justify-content: center; transition: 0.3s; cursor: pointer;}
+        .podium-drop.dragover { background: rgba(255,255,255,0.2); border-color: #fff; }
+        
+        .food-items { display: flex; gap: 15px; justify-content: center; margin-top: 20px; width: 100%;}
+        .food-drag { background: #1e293b; border: 2px solid var(--glass-border); padding: 10px 20px; border-radius: 10px; font-family: var(--font-code); font-weight: 700; color: #fff; font-size: 1.2rem; cursor: grab; user-select: none; transition: 0.2s;}
+        .food-drag:active { cursor: grabbing; transform: scale(0.95); }
+        .food-drag.placed { width: 100%; height: 100%; margin: 0; border: none; border-radius: 8px; background: #0f172a; color: var(--brand-main); box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; cursor: default;}
+
+        /* Phone UI */
+        .phone-ui { width: 100%; max-width: 400px; height: 650px; background: #0b1120; border: 12px solid #334155; border-radius: 50px; position: relative; margin: 0 auto; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.05); }
+        .phone-notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 100px; height: 30px; background: #334155; border-radius: 20px; z-index: 20; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);}
+        .phone-top-bar { height: 90px; background: rgba(15, 23, 42, 0.95); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 15px; font-weight: 800; font-size: 1.2rem; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); }
+        .phone-chat-area { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; scrollbar-width: none; background: #0b1120;}
+        .phone-msg { padding: 15px 20px; border-radius: 20px; max-width: 85%; font-size: 1.1rem; line-height: 1.4; animation: popIn 0.3s ease-out forwards; font-weight: 500; text-align: left; box-shadow: 0 5px 15px rgba(0,0,0,0.2);}
+        .phone-msg.received { background: #334155; color: #f8fafc; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .phone-msg.sent { background: linear-gradient(135deg, var(--brand-main), #d97706); color: #020617; align-self: flex-end; border-bottom-right-radius: 4px; font-weight: 700; display: none;}
+        .phone-msg.sent.visible { display: block; }
+        .phone-options-area { padding: 20px; background: rgba(15, 23, 42, 0.98); border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 10px; z-index: 10; }
+        .phone-opt-btn { background: #1e293b; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 16px 20px; border-radius: 20px; font-weight: 600; font-size: 1.05rem; cursor: pointer; transition: all 0.3s; text-align: center; display: block; width: 100%; box-shadow: 0 5px 10px rgba(0,0,0,0.3);}
+        .phone-opt-btn:hover { background: var(--brand-main); color: #000; border-color: var(--brand-main); transform: translateY(-2px); }
+        .typing-indicator { display: flex; gap: 6px; padding: 16px 25px; background: #334155; border-radius: 20px; align-self: flex-start; border-bottom-left-radius: 4px; animation: popIn 0.3s ease-out forwards; display: none;}
+        .typing-indicator.visible { display: flex; }
+        .dot { width: 10px; height: 10px; background: #9ca3af; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+        .dot:nth-child(1) { animation-delay: -0.32s; } .dot:nth-child(2) { animation-delay: -0.16s; }
+
+        /* Slot Machine */
+        .slot-machine { width: 100%; max-width: 600px; height: 120px; background: rgba(0,0,0,0.8); border: 4px solid var(--brand-main); border-radius: 20px; margin: 0 auto 30px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center;}
+        .slot-display { font-family: var(--font-display); font-size: 2rem; color: #fff; text-transform: uppercase; font-weight: 900; letter-spacing: 1px; transition: 0.1s; text-align: center; padding: 0 20px;}
+
+        /* Topic Cards */
+        .topic-grid { display: flex; gap: 20px; justify-content: center; perspective: 1000px; margin-bottom: 30px; flex-wrap: wrap;}
+        .t-card { width: 250px; height: 320px; position: relative; cursor: pointer; transform-style: preserve-3d; transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .t-card.flipped { transform: rotateY(180deg) scale(1.05); z-index: 10; pointer-events: none;}
+        .t-front, .t-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.5);}
+        .t-front { background: linear-gradient(135deg, var(--bg-base), #1e3a8a); color: #fff; font-size: 5rem; border: 4px solid rgba(255,255,255,0.2); }
+        .t-front::after { content: '?'; position: absolute; font-family: var(--font-display); font-weight: 900; opacity: 0.8;}
+        .t-front:hover { filter: brightness(1.3); transform: translateY(-8px); box-shadow: 0 20px 40px var(--accent-glow); border-color: var(--brand-main);}
+        .t-back { background: linear-gradient(135deg, #ff9900, #ff5500); color: #fff; transform: rotateY(180deg); font-size: 1.6rem; font-weight: 800; border: none; flex-direction: column; gap: 15px; text-shadow: 0 2px 5px rgba(0,0,0,0.3);}
+
+        /* The Arena Cards */
+        .arena-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; perspective: 1000px; margin-top: 30px; width: 100%; max-width: 400px; margin-inline: auto;}
+        .arena-card { background: transparent; min-height: 260px; cursor: pointer; width: 100%; display: block; }
+        .arena-card-inner { position: relative; width: 100%; height: 100%; min-height: 260px; text-align: center; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; }
+        .arena-card.flipped .arena-card-inner { transform: rotateY(180deg); }
+        .arena-card-front, .arena-card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); box-sizing: border-box; }
+        .arena-card-front { background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); }
+        .arena-card-front i { font-size: 3.5rem; color: var(--brand-main); margin-bottom: 15px; filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.5));}
+        .arena-card-front h3 { font-family: var(--font-display); font-size: 1.5rem; color: #fff; letter-spacing: 2px; margin: 0;}
+        .arena-card-back { background: var(--brand-main); color: #000; transform: rotateY(180deg); box-shadow: 0 15px 40px var(--accent-glow); padding: 20px; }
+        .arena-card-back p { color: #000; font-size: 1.15rem; font-weight: 700; margin: 0; line-height: 1.6; }
+
+        /* Would You Rather */
+        .wyr-container { display: flex; gap: 20px; width: 100%; max-width: 900px; margin: 0 auto; flex-wrap: wrap; transition: opacity 0.3s ease;}
+        .wyr-card { flex: 1; min-width: 250px; border-radius: 24px; background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); border: 2px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 50px 30px; text-align: center; position: relative; overflow: hidden;}
+        .wyr-card::before { content:''; position: absolute; inset: 0; background: radial-gradient(circle at center, var(--accent-glow), transparent 70%); opacity: 0; transition: 0.4s;}
+        .wyr-card i { font-size: 4.5rem; margin-bottom: 25px; color: var(--text-dim); transition: 0.3s; z-index: 1;}
+        .wyr-card p { font-family: var(--font-display); font-size: 1.4rem; color: #fff; line-height: 1.5; margin: 0; z-index: 1; font-weight: 700;}
+        .wyr-card:hover { transform: translateY(-10px); border-color: var(--brand-main); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .wyr-card:hover::before { opacity: 0.2; }
+        .wyr-card:hover i { color: var(--brand-main); transform: scale(1.1);}
+        .wyr-card.selected { background: linear-gradient(145deg, var(--brand-main), #d97706); transform: scale(1.05); border-color: var(--brand-main); box-shadow: 0 15px 40px var(--accent-glow); pointer-events: none;}
+        .wyr-card.selected i, .wyr-card.selected p { color: #020617; }
+        .wyr-container.locked .wyr-card:not(.selected) { opacity: 0.3; filter: grayscale(100%) blur(2px); pointer-events: none; transform: scale(0.95); }
+
+        /* Agree/Disagree */
+        .agree-container { display: flex; gap: 15px; width: 100%; max-width: 800px; margin: 0 auto; justify-content: center;}
+        .agree-btn { padding: 25px; font-weight: 800; font-size: 1.3rem; font-family: var(--font-display); border-radius: 16px; border: 2px solid; background: rgba(0,0,0,0.6); transition: 0.3s; flex: 1; cursor: pointer; color: #fff;}
+        .agree-btn.disagree { border-color: #ef4444; }
+        .agree-btn.neutral { border-color: #f59e0b; }
+        .agree-btn.agree { border-color: #10b981; }
+        .agree-btn:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .agree-btn:hover.disagree { background: #ef4444; color:#fff;}
+        .agree-btn:hover.neutral { background: #f59e0b; color:#fff;}
+        .agree-btn:hover.agree { background: #10b981; color:#000;}
+        .agree-btn.selected.disagree { background: #ef4444; color: #fff; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.5); transform: scale(1.05);}
+        .agree-btn.selected.neutral { background: #f59e0b; color: #fff; box-shadow: 0 10px 30px rgba(245, 158, 11, 0.5); transform: scale(1.05);}
+        .agree-btn.selected.agree { background: #10b981; color: #000; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5); transform: scale(1.05);}
+        .agree-container.locked .agree-btn:not(.selected) { opacity: 0.3; pointer-events: none; filter: grayscale(100%);}
+
+        /* FOOTER */
+        .footer { position: fixed; bottom: 0; left: 0; width: 100%; height: 85px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: center; padding: 0 5%; z-index: 150; border-top: 1px solid rgba(255,255,255,0.05); transition: 0.4s; }
+        .nav-btn { background: transparent; border: none; color: #94a3b8; padding: 12px 25px; font-weight: 800; cursor: pointer; transition: 0.3s; font-family: var(--font-code); display: flex; align-items: center; gap: 10px; }
+        .nav-btn:hover:not(:disabled) { color: #fff; }
+        .nav-btn.next { background: #fff; color: #000; border-radius: 12px; padding: 15px 40px; box-shadow: 0 5px 15px rgba(255,255,255,0.1); }
+        .nav-btn.next:hover { background: var(--brand-main); color: #000; box-shadow: 0 5px 25px var(--accent-glow); transform: translateY(-2px);}
+        .nav-btn.next.pulsing { animation: pulseNext 2s infinite; background: var(--brand-main); color: #000; }
+        .progress-bar { position: fixed; bottom: 85px; left: 0; height: 5px; background: var(--brand-main); transition: 0.4s; z-index: 151; box-shadow: 0 0 10px var(--brand-main);}
+        @keyframes pulseNext { 0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(251, 191, 36, 0); } 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); } }
+
+        /* SIDEBARS */
+        .sidebar-panel { position: fixed; top: 0; right: -600px; width: 500px; max-width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.98); z-index: 250; padding: 100px 50px 50px; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); border-left: 1px solid var(--glass-border); box-shadow: -30px 0 60px rgba(0,0,0,0.8); backdrop-filter: blur(20px);}
+        .sidebar-panel.right-open { right: 0; }
+        .sidebar-close { position: absolute; top: 30px; left: 30px; background: rgba(255,255,255,0.05); border: none; color: #fff; width: 50px; height: 50px; border-radius: 15px; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s;}
+        .sidebar-close:hover { background: var(--incorrect); }
+
+        .teacher-hud { position: fixed; top: 0; left: -500px; width: 450px; max-width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.98); z-index: 250; padding: 100px 50px 50px; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); border-right: 1px solid var(--glass-border); box-shadow: 30px 0 60px rgba(0,0,0,0.8); overflow-y: auto; backdrop-filter: blur(20px);}
+        .teacher-hud.open { left: 0; }
+        .hud-btn { width: 100%; padding: 15px; background: #1e293b; border: 1px solid var(--glass-border); color: #fff; border-radius: 12px; margin-bottom: 15px; cursor: pointer; font-family: var(--font-body); font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; transition: 0.2s;}
+        .hud-btn:hover { background: var(--accent); border-color: var(--accent); color: #000; }
+        .hud-btn.warning:hover { background: var(--incorrect); border-color: var(--incorrect); color: #fff; }
+        .hud-timer { font-family: var(--font-code); font-size: 3.5rem; color: var(--brand-main); text-align: center; margin-bottom: 20px; font-weight: 900;}
+
+        /* ALERTS */
+        .alert-overlay { position: fixed; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; transition: 0.3s; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);}
+        .alert-text { font-family: var(--font-display); font-size: 6rem; text-transform: uppercase; font-weight: 900; text-shadow: 0 10px 40px rgba(0,0,0,0.8); transform: scale(0.5); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; line-height: 1;}
+        .alert-overlay.show { opacity: 1; }
+        .alert-overlay.show .alert-text { transform: scale(1); }
+        .alert-error { color: var(--incorrect); filter: drop-shadow(0 0 30px var(--incorrect)); }
+        .alert-praise { color: var(--correct); filter: drop-shadow(0 0 30px var(--correct)); }
+        .alert-cue { color: var(--accent); filter: drop-shadow(0 0 30px var(--accent)); }
+        .alert-star { color: var(--brand-main); filter: drop-shadow(0 0 30px var(--brand-main)); }
+
+        .dict-word { font-family: var(--font-display); font-size: 3.5rem; color: var(--brand-main); margin-bottom: 5px; text-transform: uppercase; }
+        .dict-phonetic { font-family: var(--font-code); color: var(--accent); font-size: 1.2rem; margin-bottom: 25px; display: block; }
+        .dict-def { font-size: 1.4rem; color: #fff; line-height: 1.6; border-left: 4px solid var(--brand-main); padding-left: 20px; }
+        .hl { color: var(--brand-main); font-weight: 800; border-bottom: 2px dashed var(--brand-main); cursor: help; padding: 0 4px; transition: 0.2s;}
+        .hl:hover { background: rgba(251, 191, 36, 0.15); border-bottom-style: solid; border-radius: 4px;}
+
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            h2 { font-size: 1.5rem; }
+            .glass-panel { padding: 30px 20px; max-height: 75vh; }
+            .navbar { padding: 0 15px; height: 60px; }
+            .logo { font-size: 1rem; }
+            .main-container { padding: 90px 3% 90px 3%; }
+            .video-wrapper { max-width: 100%; border-radius: 12px; }
+            .ww-box { width: 120px; height: 120px; }
+            .ww-box i { font-size: 2rem; }
+            .podium-step { width: 90px; }
+            .scale-display { font-size: 1.5rem; }
+            .alert-text { font-size: 3.5rem; }
+            .sidebar-panel, .teacher-hud { padding: 80px 30px 30px; }
+        }
+
+        @keyframes popIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes stampDrop { to { opacity: 0.9; transform: translate(-50%, -50%) scale(1) rotate(-15deg); } }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <div class="correction-overlay"></div>
+
+    <div class="ambient-orbs">
+        <div class="bg-image"></div>
+        <div class="bg-overlay"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <div class="alert-overlay" id="alert-screen"><div class="alert-text" id="alert-msg">GREAT JOB!</div></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo"><i class="fa-solid fa-trophy"></i> WOLF LABS <span>CHAMPIONS ARENA</span></div>
+        <div class="nav-controls">
+            <button class="teacher-tool" onclick="window.toggleSidebar('teacher-hud')" title="Teacher HUD"><i class="fa-solid fa-toolbox"></i></button>
+            <div style="width: 1px; height: 25px; background: rgba(255,255,255,0.1); margin: 0 5px;"></div>
+            <button class="teacher-tool" onclick="window.toggleSidebar('whiteboard')" title="Whiteboard"><i class="fa-solid fa-pen-nib"></i></button>
+            <button class="teacher-tool" onclick="window.toggleFullscreen()" title="Fullscreen"><i class="fa-solid fa-expand"></i></button>
+        </div>
+    </nav>
+
+    <!-- TEACHER HUD (LEFT) -->
+    <div class="teacher-hud" id="teacher-hud">
+        <button class="sidebar-close" style="left: auto; right: 30px;" onclick="window.toggleSidebar('teacher-hud')"><i class="fa-solid fa-xmark"></i></button>
+        <p style="font-family: var(--font-code); color: var(--brand-main); font-size: 0.8rem; margin-bottom: 20px; letter-spacing: 2px;">// TEACHER TOOL SET</p>
+        
+        <div class="hud-timer" id="hud-timer">00:60</div>
+        <button class="hud-btn" onclick="window.startTimer()"><i class="fa-solid fa-play"></i> Start 60s Timer</button>
+        <button class="hud-btn warning" onclick="window.toggleCorrectionMode()" style="background: rgba(239, 68, 68, 0.1); border-color: var(--incorrect); color: var(--incorrect);"><i class="fa-solid fa-hand-paper"></i> Correction Mode</button>
+        
+        <div style="margin-top: 30px; border-top: 1px solid var(--glass-border); padding-top: 25px;">
+            <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 15px; font-weight: 700; font-family: var(--font-code);">STUDENT POINTS</p>
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #000; padding: 15px 25px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                <span style="color: var(--brand-main); font-size: 2rem; font-weight: 900;" id="hud-stars">⭐ 0</span>
+                <button class="hud-btn" style="width: auto; margin: 0; padding: 10px 20px;" onclick="window.awardStar()">+1</button>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; border-top: 1px solid var(--glass-border); padding-top: 25px;">
+            <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 15px; font-weight: 700; font-family: var(--font-code);">LIVE CUES</p>
+            <button class="hud-btn" style="background: rgba(59, 130, 246, 0.1); border-color: var(--accent); color: var(--accent);" onclick="window.showAlert('SPEAK<br>SLOWER 🐢', 'cue')"><i class="fa-solid fa-turtle"></i> Speak Slower</button>
+            <button class="hud-btn" style="background: rgba(59, 130, 246, 0.1); border-color: var(--accent); color: var(--accent);" onclick="window.showAlert('LOUDER<br>PLEASE 🔊', 'cue')"><i class="fa-solid fa-volume-high"></i> Speak Louder</button>
+        </div>
+
+        <div style="margin-top: 30px; border-top: 1px solid var(--glass-border); padding-top: 25px;">
+            <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 15px; font-weight: 700; font-family: var(--font-code);">PRAISE GENERATOR</p>
+            <button class="hud-btn" onclick="window.showAlert('YOU ARE<br>THE BEST! 🥇', 'praise')"><i class="fa-solid fa-medal"></i> You are the best!</button>
+            <button class="hud-btn" onclick="window.showAlert('AMAZING<br>VOCABULARY!', 'praise')"><i class="fa-solid fa-spell-check"></i> Amazing Vocab</button>
+        </div>
+    </div>
+
+    <!-- SMART DICT (RIGHT) -->
+    <div class="sidebar-panel" id="dict-panel">
+        <button class="sidebar-close" onclick="window.toggleSidebar('dict-panel')"><i class="fa-solid fa-xmark"></i></button>
+        <div id="asideContent" style="margin-top: 10px; padding-bottom: 30px; overflow-y: auto;">
+            <p style="font-family: var(--font-code); color: var(--brand-main); margin-bottom: 10px; font-weight: 700; letter-spacing: 1px;">// WOLF SMART DICT</p>
+            
+            <h1 id="d-word" class="dict-word">Word</h1>
+            <span id="d-phonetic" class="dict-phonetic">/phonetic/</span>
+            
+            <div class="dict-def" id="d-def">Definition here.</div>
+            
+            <div id="dict-context-container" style="margin-top: 20px;">
+                <div style="color: #64748b; font-family: var(--font-code); font-size: 0.95rem; letter-spacing: 3px; margin-bottom: 10px; font-weight: 800;">VIDEO CONTEXT</div>
+                <p id="v-example" style="font-style: italic; color: var(--brand-main); border-left: 4px solid var(--brand-main); padding-left: 20px; font-size: 1.4rem; font-weight: 300; margin-bottom: 35px; background: rgba(251, 191, 36, 0.05); padding: 15px 15px 15px 20px; border-radius: 0 12px 12px 0;">...</p>
+            </div>
+
+            <div id="dict-hub-container" style="margin-top: auto; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; position: relative; box-shadow: inset 0 0 30px rgba(0,0,0,0.5); display: none;">
+                <span style="position: absolute; top: -14px; left: 25px; background: linear-gradient(90deg, var(--brand-main), var(--accent)); color: #020617; font-family: var(--font-code); font-weight: 900; font-size: 0.85rem; letter-spacing: 2px; padding: 8px 16px; border-radius: 8px; box-shadow: 0 5px 15px var(--accent-glow);">🎙️ LET'S TALK</span>
+                <p id="v-question" style="color: #fff; font-size: 1.3rem; font-weight: 600; margin:0; line-height: 1.6;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- WHITEBOARD (RIGHT) -->
+    <div class="sidebar-panel" id="whiteboard">
+        <button class="sidebar-close" onclick="window.toggleSidebar('whiteboard')"><i class="fa-solid fa-xmark"></i></button>
+        <h2 style="text-align: left; color: #fff; font-family: var(--font-display);">WHITEBOARD</h2>
+        <textarea style="width: 100%; height: 75%; background: #000; border: 1px solid var(--glass-border); border-radius: 15px; margin-top: 20px; padding: 25px; color: var(--brand-main); font-family: var(--font-code); font-size: 1.2rem; resize: none; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);" placeholder="// Capture student speaking errors here..."></textarea>
+    </div>
+
+    <main class="main-container" id="slides-container">
+
+        <!-- 1. INTERACTIVE TG (TEACHER'S GUIDE) -->
+        <div class="slide active">
+            <div class="glass-panel" style="text-align: left;">
+                <h2 style="color: #fff; margin-bottom: 15px; justify-content: flex-start;"><i class="fa-solid fa-chalkboard-user" style="color: var(--brand-main);"></i> TEACHER'S GUIDE (TG)</h2>
+                
+                <div style="background: rgba(0,0,0,0.4); border-radius: 15px; padding: 20px; margin: 10px 0; border-left: 4px solid var(--brand-main); width: 100%;">
+                    <p style="font-weight: 800; color: var(--brand-main); margin-bottom: 15px; font-size: 1.2rem;">OBJECTIVE: Master Superlatives (EST / MOST)</p>
+                    <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; font-size: 1.1rem; line-height: 1.5;">
+                        <i class="fa-solid fa-check" style="color: var(--brand-main); margin-top: 4px;"></i> 
+                        <span><strong>Warm-up:</strong> Ask about competitions. Use slide 3 to begin.</span>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; font-size: 1.1rem; line-height: 1.5;">
+                        <i class="fa-solid fa-check" style="color: var(--brand-main); margin-top: 4px;"></i> 
+                        <span><strong>Grammar:</strong> Use the Sandbox to show the difference between comparative and superlative forms.</span>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; font-size: 1.1rem; line-height: 1.5;">
+                        <i class="fa-solid fa-check" style="color: var(--brand-main); margin-top: 4px;"></i> 
+                        <span><strong>Practice:</strong> Focus on "The Superlative Awards". The student MUST justify each award using complete sentences.</span>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 12px; font-size: 1.1rem; line-height: 1.5;">
+                        <i class="fa-solid fa-check" style="color: var(--brand-main); margin-top: 4px;"></i> 
+                        <span><strong>Wolf Tip:</strong> Use the side HUD to give stars (+1 Point) and the Whiteboard for silent corrections. 100% English Immersion!</span>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px; width: 100%;">
+                    <button class="btn-start" onclick="window.nextSlide()"><i class="fa-solid fa-power-off"></i> INITIALIZE MASTERCLASS</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. COVER -->
+        <div class="slide">
+            <div class="glass-panel" style="text-align: center; border: none; background: transparent; box-shadow: none;">
+                <div style="font-size: 8rem; color: var(--brand-main); filter: drop-shadow(0 0 30px var(--accent-glow)); animation: pulse 3s infinite; margin-bottom: 20px;">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h1 style="font-size: 5.5rem; letter-spacing: -1px; text-transform: uppercase; margin-bottom: 10px; text-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+                    BE THE<br><span style="color: var(--brand-main);">BEST</span>
+                </h1>
+                <p style="font-size: 1.5rem; letter-spacing: 5px; color: var(--accent); font-weight: 800; margin-bottom: 40px; font-family: var(--font-code);">A1 MASTERCLASS</p>
+                <div style="margin-bottom: 30px;">
+                    <input type="text" id="s-name" class="input-name" placeholder="Enter student name..." onkeypress="if(event.key==='Enter') window.saveNameAndStart()">
+                </div>
+                <button class="btn-start" style="font-size: 1.5rem; padding: 25px 60px;" onclick="window.saveNameAndStart()">START GAME <i class="fa-solid fa-play" style="margin-left: 10px;"></i></button>
+            </div>
+        </div>
+
+        <!-- 3. ICEBREAKER -->
+        <div class="slide" data-hub="true">
+            <div class="glass-panel text-center">
+                <h2><i class="fa-solid fa-fire"></i> ICEBREAKER</h2>
+                <p style="font-size: 1.8rem; margin-bottom: 40px;">Hi <span class="dyn-name">Champion</span>! Do you like competitions?</p>
+                
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;">
+                    <button class="btn-start" style="background: rgba(0,0,0,0.6); border: 1px solid var(--accent); color: #fff;" onclick="window.genericCorrect(this, true, 'hub-icebreaker')">
+                        YES, I AM COMPETITIVE
+                    </button>
+                    <button class="btn-start" style="background: rgba(0,0,0,0.6); border: 1px solid var(--brand-main); color: #fff;" onclick="window.genericCorrect(this, true, 'hub-icebreaker')">
+                        NO, JUST FOR FUN
+                    </button>
+                </div>
+
+                <div class="speaking-hub" id="hub-icebreaker">
+                    <p><strong>Teacher:</strong> Ask "What is your favorite game or sport to win?"</p>
+                    <button class="starter-reveal-btn" onclick="window.revealStarter(this)"><i class="fa-solid fa-lightbulb"></i> Show Speaking Starter</button>
+                    <div class="starter-content">
+                        <span class="starter-phrase">"My favorite sport/game is..."</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. VOCAB 1: TROPHY ROOM -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-box-open"></i> TROPHY ROOM</h2>
+                <p>Click the trophies to reveal the adjectives.</p>
+                <div class="ww-grid">
+                    <div class="ww-box" onclick="window.openBox(this, 'Tall', 'btn-v1')">
+                        <i class="fa-solid fa-arrows-up-to-line"></i><span style="font-family: var(--font-code); color: var(--text-dim); font-size: 1.2rem;">1</span>
+                    </div>
+                    <div class="ww-box" onclick="window.openBox(this, 'Strong', 'btn-v1')">
+                        <i class="fa-solid fa-dumbbell"></i><span style="font-family: var(--font-code); color: var(--text-dim); font-size: 1.2rem;">2</span>
+                    </div>
+                    <div class="ww-box" onclick="window.openBox(this, 'Fast', 'btn-v1')">
+                        <i class="fa-solid fa-bolt"></i><span style="font-family: var(--font-code); color: var(--text-dim); font-size: 1.2rem;">3</span>
+                    </div>
+                </div>
+                <button class="btn-start" style="margin-top: 30px; display: none;" id="btn-v1" onclick="window.nextSlide()">PROCEED</button>
+            </div>
+        </div>
+
+        <!-- 5. VIDEO CHUNK 1 -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-brands fa-youtube"></i> THE CHAMPIONS</h2>
+                <p>Watch the video. Pay attention to who is the best!</p>
+                <div class="video-wrapper">
+                    <iframe data-src="https://www.youtube-nocookie.com/embed/5VGtCbFclgk?start=1&end=45&rel=0&modestbranding=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                </div>
+                <button class="btn-start" onclick="window.nextSlide()">I FINISHED WATCHING</button>
+            </div>
+        </div>
+
+        <!-- 6. GRAMMAR BLUEPRINT 1: SHORT ADJECTIVES -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-book-atlas"></i> GRAMMAR BLUEPRINT 1</h2>
+                <p style="font-size: 1.6rem; margin-bottom: 30px;">How to say "O Mais" in English? (Short Adjectives)</p>
+                
+                <div style="display: flex; gap: 20px; width: 100%; max-width: 900px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.5); border: 2px solid var(--accent); border-radius: 20px; padding: 30px; text-align: left; position: relative;">
+                        <span style="position: absolute; top: -15px; left: 20px; background: var(--accent); color: #fff; padding: 5px 15px; font-weight: 900; font-family: var(--font-code); border-radius: 8px;">1. SHORT ADJECTIVES</span>
+                        <p style="color: var(--accent); font-size: 1.2rem; font-weight: 700; margin-top: 10px; margin-bottom: 10px;"><i class="fa-solid fa-arrow-right"></i> THE + ADJ + EST</p>
+                        <p style="color: var(--text-dim); font-size: 1.1rem; margin-bottom: 20px;">We use this to compare 1 person with everybody else.</p>
+                        <div style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 10px; border-left: 4px solid var(--accent);">
+                            <p style="color: #fff; font-weight: 700; margin: 0;">Tim is <span style="color: var(--accent);">the tallest</span>.</p>
+                        </div>
+                    </div>
+
+                    <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.5); border: 2px solid var(--brand-main); border-radius: 20px; padding: 30px; text-align: left; position: relative;">
+                        <span style="position: absolute; top: -15px; left: 20px; background: var(--brand-main); color: #000; padding: 5px 15px; font-weight: 900; font-family: var(--font-code); border-radius: 8px;">2. IRREGULAR</span>
+                        <p style="color: var(--brand-main); font-size: 1.2rem; font-weight: 700; margin-top: 10px; margin-bottom: 10px;"><i class="fa-solid fa-star"></i> DIFFERENT WORDS</p>
+                        <p style="color: var(--text-dim); font-size: 1.1rem; margin-bottom: 20px;">Some adjectives change completely! Good / Bad.</p>
+                        <div style="background: rgba(251, 191, 36, 0.1); padding: 15px; border-radius: 10px; border-left: 4px solid var(--brand-main);">
+                            <p style="color: #fff; font-weight: 700; margin: 0;">Good = <span style="color: var(--brand-main);">The best</span></p>
+                            <p style="color: #fff; font-weight: 700; margin: 0;">Bad = <span style="color: var(--incorrect);">The worst</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="speaking-hub" style="display:block; text-align: left; width: 100%; margin-top: 30px;">
+                    <p><strong>TEACHER:</strong> Ask the student to read the examples out loud.</p>
+                </div>
+                <button class="btn-start" style="margin-top: 30px;" onclick="window.nextSlide()">NEXT GRAMMAR</button>
+            </div>
+        </div>
+
+        <!-- 7. GRAMMAR BLUEPRINT 2: LONG ADJECTIVES -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-book-atlas"></i> GRAMMAR BLUEPRINT 2</h2>
+                <p style="font-size: 1.6rem; margin-bottom: 30px;">How to say "O Mais" in English? (Long Adjectives)</p>
+                
+                <div style="display: flex; gap: 20px; width: 100%; max-width: 900px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.5); border: 2px solid var(--accent); border-radius: 20px; padding: 30px; text-align: left; position: relative;">
+                        <span style="position: absolute; top: -15px; left: 20px; background: var(--accent); color: #fff; padding: 5px 15px; font-weight: 900; font-family: var(--font-code); border-radius: 8px;">1. LONG ADJECTIVES</span>
+                        <p style="color: var(--accent); font-size: 1.2rem; font-weight: 700; margin-top: 10px; margin-bottom: 10px;"><i class="fa-solid fa-arrow-right"></i> THE MOST + ADJ</p>
+                        <p style="color: var(--text-dim); font-size: 1.1rem; margin-bottom: 20px;">Use for adjectives with 2 or more syllables (Beautiful, Expensive).</p>
+                        <div style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 10px; border-left: 4px solid var(--accent);">
+                            <p style="color: #fff; font-weight: 700; margin: 0;">This car is <span style="color: var(--accent);">the most expensive</span>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="speaking-hub" style="display:block; text-align: left; width: 100%; margin-top: 30px;">
+                    <p><strong>TEACHER:</strong> Explain that we don't say "Beautifulest" or "Expensivest". We use "The most".</p>
+                </div>
+                <button class="btn-start" style="margin-top: 30px;" onclick="window.nextSlide()">PRACTICE IT</button>
+            </div>
+        </div>
+
+        <!-- 8. GRAMMAR SANDBOX -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-sliders"></i> GRAMMAR SANDBOX</h2>
+                <p style="font-size: 1.6rem; margin-bottom: 40px;">Comparative vs. Superlative</p>
+                <div class="grammar-switch">
+                    <button class="switch-btn active" onclick="window.switchGrammar(this, 'Tim is TALLER THAN Georgie.', 'SHORT (Comp)', 'sandbox-sentence-1', 'sandbox-rule-1')">Short (Comp)</button>
+                    <button class="switch-btn" onclick="window.switchGrammar(this, 'Tim is THE TALLEST person.', 'SHORT (Sup)', 'sandbox-sentence-1', 'sandbox-rule-1')">Short (Sup)</button>
+                    <button class="switch-btn" onclick="window.switchGrammar(this, 'A Ferrari is MORE EXPENSIVE THAN a Ford.', 'LONG (Comparative)', 'sandbox-sentence-1', 'sandbox-rule-1')">Long (Comp)</button>
+                    <button class="switch-btn" onclick="window.switchGrammar(this, 'A Bugatti is THE MOST EXPENSIVE car.', 'LONG (Superlative)', 'sandbox-sentence-1', 'sandbox-rule-1')">Long (Sup)</button>
+                </div>
+                <div class="sandbox-display">
+                    <div id="sandbox-rule-1" style="color: var(--brand-main); font-size: 1.2rem; letter-spacing: 2px; font-weight: 800; font-family: var(--font-code); margin-bottom: 10px;">SHORT (Comp)</div>
+                    <span id="sandbox-sentence-1" style="color: #fff; font-size: 2.5rem; font-weight: 700; line-height: 1.4;">Tim is <span style="color:var(--brand-main);">TALLER THAN</span> Georgie.</span>
+                </div>
+                <button class="btn-start" style="margin-top: 30px;" onclick="window.nextSlide()">I UNDERSTAND</button>
+            </div>
+        </div>
+
+        <!-- 9. THE WEIGHING SCALE -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-scale-balanced"></i> ADJECTIVE SORTER</h2>
+                <p>Is the adjective Short (-EST) or Long (THE MOST)?</p>
+                
+                <div class="scale-container">
+                    <div class="scale-display" id="scale-display">TALL (TALLEST)</div>
+                    <div class="scale-controls">
+                        <button class="scale-btn" onclick="window.weighItem('SHORT')">SHORT <span style="display:block; font-size: 1rem; font-weight: 400; font-family: var(--font-body);">(e.g. Tallest)</span></button>
+                        <button class="scale-btn" onclick="window.weighItem('LONG')">LONG <span style="display:block; font-size: 1rem; font-weight: 400; font-family: var(--font-body);">(e.g. The most...)</span></button>
+                    </div>
+                    <div class="scale-baskets">
+                        <div class="basket" id="basket-short" data-label="SHORT (-EST)"></div>
+                        <div class="basket" id="basket-long" data-label="LONG (THE MOST)"></div>
+                    </div>
+                </div>
+
+                <div class="speaking-hub" id="hub-scale">
+                    <p><strong>TEACHER:</strong> "Great job sorting! Ready for the next competition?"</p>
+                    <button class="btn-start" style="margin-top: 15px;" onclick="window.nextSlide()">NEXT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10. VIDEO CHUNK 2 -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-brands fa-youtube"></i> THE CAKE COMPETITION</h2>
+                <p>Watch from 1:34 to 3:40. Whose cake is the best?</p>
+                <div class="video-wrapper">
+                    <iframe data-src="https://www.youtube-nocookie.com/embed/5VGtCbFclgk?start=94&end=220&rel=0&modestbranding=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                </div>
+                <button class="btn-start" onclick="window.nextSlide()">I FINISHED WATCHING</button>
+            </div>
+        </div>
+
+        <!-- 11. THE FACT CHECKER -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-clipboard-check"></i> THE JUDGE'S RESULT</h2>
+                <p>Stamp the claim as Verified (True) or Fake News (False).</p>
+                
+                <div class="fact-checker-card" id="fc-1">
+                    <div class="fact-statement">"Sian's cake is the best."</div>
+                    <div class="fact-stamp-area">
+                        <button class="stamp-btn verified" onclick="window.checkFact(this, true, 1)">VERIFIED</button>
+                        <button class="stamp-btn fake" onclick="window.checkFact(this, false, 1)">FAKE NEWS</button>
+                    </div>
+                    <div class="stamp-mark" id="sm-1">VERIFIED</div>
+                </div>
+
+                <div class="fact-checker-card" id="fc-2" style="display:none;">
+                    <div class="fact-statement">"Buli's cake is better than Georgie's cake."</div>
+                    <div class="fact-stamp-area">
+                        <button class="stamp-btn verified" onclick="window.checkFact(this, false, 2)">VERIFIED</button>
+                        <button class="stamp-btn fake" onclick="window.checkFact(this, true, 2)">FAKE NEWS</button>
+                    </div>
+                    <div class="stamp-mark" id="sm-2">FAKE NEWS</div>
+                </div>
+
+                <div class="speaking-hub" id="hub-fc">
+                    <p><strong>TEACHER:</strong> "Who makes the best cake in your family?"</p>
+                    <button class="starter-reveal-btn" onclick="window.revealStarter(this)"><i class="fa-solid fa-lightbulb"></i> Show Speaking Starter</button>
+                    <div class="starter-content">
+                        <span class="starter-phrase">"My mother/father makes the best cake!"</span>
+                    </div>
+                    <button class="btn-start" style="margin-top: 15px;" onclick="window.nextSlide()">CONTINUE</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 12. THE SUPERLATIVE AWARDS (NEW CONVERSATIONAL GAME) -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-award"></i> THE SUPERLATIVE AWARDS</h2>
+                <p style="font-size: 1.5rem; margin-bottom: 30px;">You are the host! Give these 3 awards to people or things you know.</p>
+                
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 900px; margin-bottom: 30px;">
+                    <div class="award-card" onclick="window.giveAward(this, 'The Funniest Person')">
+                        <i class="fa-solid fa-masks-theater"></i>
+                        <h3>The Funniest Person</h3>
+                    </div>
+                    <div class="award-card" onclick="window.giveAward(this, 'The Most Delicious Food')">
+                        <i class="fa-solid fa-burger"></i>
+                        <h3>The Most Delicious Food</h3>
+                    </div>
+                    <div class="award-card" onclick="window.giveAward(this, 'The Best Movie')">
+                        <i class="fa-solid fa-clapperboard"></i>
+                        <h3>The Best Movie</h3>
+                    </div>
+                </div>
+
+                <div class="speaking-hub" id="hub-awards" style="display:none; text-align: left; width: 100%;">
+                    <p><strong>TEACHER:</strong> "And the winner is...?" Ask the student to explain WHY they chose them!</p>
+                    <button class="starter-reveal-btn" onclick="window.revealStarter(this)"><i class="fa-solid fa-lightbulb"></i> Show Speaking Starter</button>
+                    <div class="starter-content">
+                        <span class="starter-phrase">"The award for <strong id="award-cat-name" style="color:var(--brand-main);">...</strong> goes to... because..."</span>
+                    </div>
+                    <button class="btn-start" style="margin-top: 15px;" onclick="window.nextSlide()">NEXT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 13. SYNTAX BUILDER -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-wrench"></i> BUILD THE SENTENCE</h2>
+                <p>Reorder the words to say who is bad at dancing.</p>
+                <div class="drop-zone" id="dz-1"></div>
+                <div class="ww-grid" style="gap: 15px; margin-top: 0;">
+                    <span class="word-chip" onclick="window.moveWord(this, 'dz-1', 'Tim,is,the,worst,dancer.')">dancer.</span>
+                    <span class="word-chip" onclick="window.moveWord(this, 'dz-1', 'Tim,is,the,worst,dancer.')">the</span>
+                    <span class="word-chip" onclick="window.moveWord(this, 'dz-1', 'Tim,is,the,worst,dancer.')">Tim</span>
+                    <span class="word-chip" onclick="window.moveWord(this, 'dz-1', 'Tim,is,the,worst,dancer.')">worst</span>
+                    <span class="word-chip" onclick="window.moveWord(this, 'dz-1', 'Tim,is,the,worst,dancer.')">is</span>
+                </div>
+                <div class="speaking-hub" id="hub-syn">
+                    <p><strong>TEACHER:</strong> "Are you a good dancer or the worst dancer?"</p>
+                    <button class="btn-start" style="margin-top: 15px;" onclick="window.nextSlide()">NEXT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 14. VIDEO CHUNK 3 -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-brands fa-youtube"></i> THE LAST GAMES</h2>
+                <p>Watch to the end. Who is the fastest?</p>
+                <div class="video-wrapper">
+                    <iframe data-src="https://www.youtube-nocookie.com/embed/5VGtCbFclgk?start=225&end=350&rel=0&modestbranding=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                </div>
+                <button class="btn-start" onclick="window.nextSlide()">I FINISHED WATCHING</button>
+            </div>
+        </div>
+
+        <!-- 15. THE JUDGE'S RADIO -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-walkie-talkie"></i> THE JUDGE'S RADIO</h2>
+                <p>You are the Judge. Announce the winner of the race!</p>
+                
+                <div style="background: #0f172a; border: 2px solid #334155; border-radius: 24px; padding: 30px; width: 100%; max-width: 600px; margin: 0 auto; box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,0,0,0.5);">
+                    <div style="display: flex; justify-content: space-between; color: var(--accent); font-family: var(--font-code); font-weight: bold; border-bottom: 1px solid #334155; padding-bottom: 15px; margin-bottom: 20px;">
+                        <span>LIVE BROADCAST</span>
+                        <span>FREQ: 101.5 FM</span>
+                    </div>
+                    
+                    <div style="height: 60px; display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 20px;">
+                        <div style="width: 8px; background: var(--accent); border-radius: 4px; height: 20%;"></div><div style="width: 8px; background: var(--accent); border-radius: 4px; height: 50%;"></div><div style="width: 8px; background: var(--accent); border-radius: 4px; height: 80%;"></div><div style="width: 8px; background: var(--accent); border-radius: 4px; height: 40%;"></div><div style="width: 8px; background: var(--accent); border-radius: 4px; height: 90%;"></div><div style="width: 8px; background: var(--accent); border-radius: 4px; height: 60%;"></div><div style="width: 8px; background: var(--accent); border-radius: 4px; height: 30%;"></div>
+                    </div>
+
+                    <div style="font-family: var(--font-code); font-size: 1.2rem; color: #fff; text-align: left; background: rgba(59, 130, 246, 0.1); padding: 20px; border-radius: 12px; margin-bottom: 25px; border-left: 4px solid var(--accent);">
+                        "Judge! The race is finished! Who was the winner?"
+                    </div>
+
+                    <div id="radio-opts" style="display: flex; flex-direction: column; gap: 15px;">
+                        <button class="phone-opt-btn" onclick="window.sendRadio(this, false)" style="text-align: left;">"Georgie is the most fast runner!"</button>
+                        <button class="phone-opt-btn" onclick="window.sendRadio(this, true)" style="text-align: left;">"Georgie is the fastest runner!"</button>
+                    </div>
+                </div>
+
+                <div class="speaking-hub" id="p_radio">
+                    <p><strong>TEACHER:</strong> "Perfect announcement! Remember, short adjectives use -EST."</p>
+                    <button class="btn-start" style="margin-top: 15px;" onclick="window.nextSlide()">PROCEED</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 16. THE PODIUM -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-ranking-star"></i> THE PODIUM</h2>
+                <p>Drag the food to rank them from 1 (Best) to 3 (Good). On mobile, click the food, then click the podium spot!</p>
+                
+                <div class="podium-container">
+                    <div class="podium-step second">
+                        <div class="podium-drop" id="drop-2" ondragover="window.allowDrop(event)" ondrop="window.dropPodium(event)" onclick="window.clickDropMobile(this)"></div>
+                        <span class="podium-number">2</span>
+                    </div>
+                    <div class="podium-step first">
+                        <div class="podium-drop" id="drop-1" ondragover="window.allowDrop(event)" ondrop="window.dropPodium(event)" onclick="window.clickDropMobile(this)"></div>
+                        <span class="podium-number">1</span>
+                    </div>
+                    <div class="podium-step third">
+                        <div class="podium-drop" id="drop-3" ondragover="window.allowDrop(event)" ondrop="window.dropPodium(event)" onclick="window.clickDropMobile(this)"></div>
+                        <span class="podium-number">3</span>
+                    </div>
+                </div>
+
+                <div class="food-items" id="food-source">
+                    <div class="food-drag" draggable="true" ondragstart="window.dragStart(event)" onclick="window.selectFoodMobile(this)" id="food-pizza" style="touch-action: none;">🍕 PIZZA</div>
+                    <div class="food-drag" draggable="true" ondragstart="window.dragStart(event)" onclick="window.selectFoodMobile(this)" id="food-salad" style="touch-action: none;">🥗 SALAD</div>
+                    <div class="food-drag" draggable="true" ondragstart="window.dragStart(event)" onclick="window.selectFoodMobile(this)" id="food-burger" style="touch-action: none;">🍔 BURGER</div>
+                </div>
+
+                <div class="speaking-hub" id="hub-podium">
+                    <p><strong>TEACHER:</strong> Let the student read their ranking using the superlatives.</p>
+                    <button class="starter-reveal-btn" onclick="window.revealStarter(this)"><i class="fa-solid fa-lightbulb"></i> Show Speaking Starter</button>
+                    <div class="starter-content">
+                        <span class="starter-phrase">"[Food 3] is good, but [Food 2] is better. [Food 1] is the best!"</span>
+                    </div>
+                    <button class="btn-start" style="margin-top: 15px;" onclick="window.nextSlide()">CONTINUE</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 17. TEXTING SCENARIO -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-brands fa-whatsapp" style="color: #25D366;"></i> TEXTING A FRIEND</h2>
+                <p>You just won the big race! Tell your best friend.</p>
+                
+                <div class="phone-ui">
+                    <div class="phone-notch"></div>
+                    <div class="phone-top-bar"><i class="fa-solid fa-user-circle" style="color:var(--brand-main); margin-right:8px;"></i> Best Friend</div>
+                    <div class="phone-chat-area">
+                        <div class="phone-msg received">Hey! How was the running competition? Did you win?</div>
+                        <div class="typing-indicator" id="typing-dot-1">
+                            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                        </div>
+                    </div>
+                    <div class="phone-options-area" id="chat-opts-1">
+                        <button class="phone-opt-btn" onclick="window.advanceChat(this, true, 'chat-opts-1', 'typing-dot-1', 'p_text1')">Yes! I won! I was the fastest runner!</button>
+                        <button class="phone-opt-btn" onclick="window.advanceChat(this, false, 'chat-opts-1', 'typing-dot-1')">Yes! I am the most fast runner.</button>
+                    </div>
+                </div>
+                
+                <div class="speaking-hub" id="p_text1">
+                    <p><strong>TEACHER:</strong> "Awesome! Have you ever won a competition?"</p>
+                    <button class="btn-start" style="margin-top: 15px;" onclick="window.nextSlide()">NEXT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 18. ACTION SPINNER -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-bolt"></i> SUPERLATIVE QUESTIONS</h2>
+                <p style="margin-bottom: 30px;">Spin to get a question. Answer it using a superlative!</p>
+                
+                <div class="slot-machine">
+                    <div id="slot-display" class="slot-display">SPIN ME</div>
+                </div>
+                <button class="btn-start" onclick="window.spinSlot()" style="margin-bottom: 20px;">SPIN</button>
+
+                <div class="speaking-hub" id="p_slot">
+                    <p>Teacher: Help the student answer using "I am the..." or "[Name] is the..."</p>
+                    <button class="starter-reveal-btn" onclick="window.revealStarter(this)"><i class="fa-solid fa-lightbulb"></i> Show Speaking Starter</button>
+                    <div class="starter-content">
+                        <span class="starter-phrase">"In my family, my brother is the tallest."</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 19. THE STORE ROLEPLAY -->
+        <div class="slide" data-hub="true">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-shop"></i> THE ARENA: THE STORE</h2>
+                <p>Click the card to reveal your role!</p>
+                <div class="arena-grid">
+                    <div class="arena-card" onclick="this.classList.toggle('flipped'); document.getElementById('p_18_arena').style.display='block'; window.unlockNextManual();">
+                        <div class="arena-card-inner">
+                            <div class="arena-card-front">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                                <h3>THE CUSTOMER</h3>
+                            </div>
+                            <div class="arena-card-back">
+                                <p>You are in a tech store. The teacher is the assistant. Tell them you want the BEST and the BIGGEST phone!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="speaking-hub" id="p_18_arena">
+                    <p>Teacher: "Hello! Welcome to the store. Do you need a new phone?"</p>
+                    <button class="starter-reveal-btn" onclick="window.revealStarter(this)"><i class="fa-solid fa-lightbulb"></i> Show Speaking Starter</button>
+                    <div class="starter-content">
+                        <span class="starter-title">Student Starter</span>
+                        <span class="starter-phrase">"Hi! Yes, I want the best phone. I want the biggest screen."</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 20. FAMILY RECORDS -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-users"></i> FAMILY RECORDS</h2>
+                <p>Think about your family and answer the questions!</p>
+                
+                <div style="display: flex; gap: 20px; width: 100%; max-width: 800px; flex-wrap: wrap; margin-bottom: 30px;">
+                    <div style="flex: 1; min-width: 200px; background: rgba(0,0,0,0.5); padding: 30px; border-radius: 20px; border: 1px solid var(--glass-border);">
+                        <i class="fa-solid fa-arrows-up-to-line" style="font-size: 3rem; color: var(--brand-main); margin-bottom: 15px;"></i>
+                        <h3 style="color: #fff; font-family: var(--font-display);">The Tallest</h3>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; background: rgba(0,0,0,0.5); padding: 30px; border-radius: 20px; border: 1px solid var(--glass-border);">
+                        <i class="fa-solid fa-cake-candles" style="font-size: 3rem; color: var(--accent); margin-bottom: 15px;"></i>
+                        <h3 style="color: #fff; font-family: var(--font-display);">The Oldest</h3>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; background: rgba(0,0,0,0.5); padding: 30px; border-radius: 20px; border: 1px solid var(--glass-border);">
+                        <i class="fa-solid fa-baby" style="font-size: 3rem; color: #10b981; margin-bottom: 15px;"></i>
+                        <h3 style="color: #fff; font-family: var(--font-display);">The Youngest</h3>
+                    </div>
+                </div>
+
+                <div class="speaking-hub" style="display:block;">
+                    <p><strong>TEACHER:</strong> Ask the student who holds each "record" in their family.</p>
+                    <button class="starter-reveal-btn" onclick="window.revealStarter(this)"><i class="fa-solid fa-lightbulb"></i> Show Speaking Starter</button>
+                    <div class="starter-content">
+                        <span class="starter-phrase">"My father is the tallest. My grandmother is the oldest..."</span>
+                    </div>
+                    <button class="btn-start" style="margin-top: 15px;" onclick="window.nextSlide()">NEXT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 21. WOULD YOU RATHER -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-code-branch"></i> WOULD YOU RATHER?</h2>
+                <p>Choose your superpower!</p>
+                <div class="wyr-container" id="wyr-container">
+                    <div class="wyr-card" id="wyr-card-1" onclick="window.answerWyr(1)">
+                        <i id="wyr-icon-1" class="fa-solid fa-bolt"></i>
+                        <p id="wyr-text-1">Be the fastest person in the world.</p>
+                    </div>
+                    <div class="wyr-card" id="wyr-card-2" onclick="window.answerWyr(2)">
+                        <i id="wyr-icon-2" class="fa-solid fa-brain"></i>
+                        <p id="wyr-text-2">Be the smartest person in the world.</p>
+                    </div>
+                </div>
+                <div class="speaking-hub" id="hub-wyr">
+                    <p>Teacher: Ask the student "Why did you choose that?"</p>
+                    <button class="starter-reveal-btn" onclick="window.revealStarter(this)"><i class="fa-solid fa-lightbulb"></i> Show Speaking Starter</button>
+                    <div class="starter-content">
+                        <span class="starter-phrase">"I want to choose this because..."</span>
+                    </div>
+                    <button class="btn-start" id="wyr-next-btn" style="margin-top: 15px;" onclick="window.nextWyr()">NEXT QUESTION</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 22. STAND YOUR GROUND -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-balance-scale"></i> STAND YOUR GROUND</h2>
+                <p>What is your opinion on this statement?</p>
+                <div style="background: rgba(0,0,0,0.6); padding: 50px; border-radius: 20px; font-size: 2.5rem; font-weight: 900; margin-bottom: 30px; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); text-align: center; border: 1px dashed var(--glass-border);">
+                    "Winning is the most important thing."
+                </div>
+                <div class="agree-container" id="agree-box">
+                    <button class="agree-btn disagree" onclick="window.selectAgree(this)">DISAGREE</button>
+                    <button class="agree-btn neutral" onclick="window.selectAgree(this)">NEUTRAL</button>
+                    <button class="agree-btn agree" onclick="window.selectAgree(this)">AGREE</button>
+                </div>
+                <div class="speaking-hub" id="hub-agree">
+                    <p>Teacher: Ask "Is having fun more important?"</p>
+                    <button class="starter-reveal-btn" onclick="window.revealStarter(this)"><i class="fa-solid fa-lightbulb"></i> Show Speaking Starter</button>
+                    <div class="starter-content">
+                        <span class="starter-phrase">"I disagree, having fun is better."</span>
+                    </div>
+                    <button class="btn-start" style="margin-top: 15px;" onclick="window.nextSlide()">NEXT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 23. TOPIC CARDS -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-clone"></i> PICK A TOPIC</h2>
+                <p>Click a card for a conversation question!</p>
+                <div class="topic-grid">
+                    <div class="t-card" onclick="window.flipTopic(this, 'What is the best movie you have ever watched?', 'The best movie is...')">
+                        <div class="t-front"></div>
+                        <div class="t-back"></div>
+                    </div>
+                    <div class="t-card" onclick="window.flipTopic(this, 'Who is the funniest person in your family?', 'The funniest person is...')">
+                        <div class="t-front"></div>
+                        <div class="t-back"></div>
+                    </div>
+                    <div class="t-card" onclick="window.flipTopic(this, 'What is the worst food you have ever eaten?', 'The worst food is...')">
+                        <div class="t-front"></div>
+                        <div class="t-back"></div>
+                    </div>
+                </div>
+                <div class="speaking-hub" id="p_cards">
+                    <p>Teacher: Let the student answer using superlatives.</p>
+                    <button class="starter-reveal-btn" onclick="window.revealStarter(this)"><i class="fa-solid fa-lightbulb"></i> Show Speaking Starter</button>
+                    <div class="starter-content">
+                        <span class="starter-title">Student Starter</span>
+                        <span class="starter-phrase" id="cards-starter-phrase">"..."</span>
+                    </div>
+                    <button class="btn-start" style="margin-top: 15px;" onclick="window.nextSlide()">NEXT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 24. RAPID FIRE Q&A -->
+        <div class="slide">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-stopwatch"></i> RAPID FIRE Q&A</h2>
+                <p>The teacher will ask 5 fast questions. Answer as fast as you can!</p>
+                
+                <div style="background: rgba(0,0,0,0.5); padding: 40px; border-radius: 20px; font-size: 1.5rem; text-align: left; border: 1px solid var(--accent); margin-bottom: 30px; width: 100%; max-width: 800px;">
+                    <ol style="color: #fff; line-height: 2.2; margin-left: 20px;">
+                        <li>What is the <strong style="color:var(--brand-main);">biggest</strong> animal?</li>
+                        <li>Who is the <strong style="color:var(--brand-main);">best</strong> singer?</li>
+                        <li>What is the <strong style="color:var(--brand-main);">fastest</strong> car?</li>
+                        <li>What is the <strong style="color:var(--brand-main);">worst</strong> chore at home?</li>
+                        <li>Who is the <strong style="color:var(--brand-main);">smartest</strong> person you know?</li>
+                    </ol>
+                </div>
+
+                <div class="speaking-hub" style="display:block;">
+                    <p><strong>TEACHER:</strong> Keep the pace fast and fun!</p>
+                    <button class="btn-start" style="margin-top: 15px;" onclick="window.nextSlide()">NEXT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 25. FINAL PITCH: MY WORLD RECORDS -->
+        <div class="slide" data-hub="true">
+            <div class="glass-panel">
+                <h2><i class="fa-solid fa-bullhorn"></i> MY WORLD RECORDS</h2>
+                <p style="font-size: 1.5rem; margin-bottom: 25px;">Talk about your personal "records" for 60 seconds.</p>
+                <div style="background: rgba(0,0,0,0.5); padding: 40px; border-radius: 20px; border: 1px solid var(--brand-main); display: inline-block; text-align: left; box-shadow: inset 0 10px 30px rgba(0,0,0,0.5);">
+                    <h3 style="color:#fff; margin-bottom:20px; text-transform:uppercase; letter-spacing:2px; font-size:1.5rem;">Mission Checklist:</h3>
+                    <ul style="color: #fff; font-size: 1.5rem; margin-left: 20px; line-height: 2;">
+                        <li>Say what is <strong style="color:var(--brand-main);">the best</strong> thing in your life.</li>
+                        <li>Say who is <strong style="color:var(--brand-main);">the funniest</strong> friend you have.</li>
+                        <li>Say what is <strong style="color:var(--brand-main);">the hardest</strong> thing to do.</li>
+                    </ul>
+                </div>
+                <br><br>
+                <button class="btn-start" onclick="document.getElementById('p_21_pitch').style.display='block'; window.startTimer(); window.toggleSidebar('teacher-hud'); window.unlockNextManual();">START PITCH</button>
+                <div class="speaking-hub" id="p_21_pitch">
+                    <p>Teacher: Listen and celebrate! This is the ultimate test of their A1 fluency. 🎉 (The 60s timer has been started on your HUD).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 26. MISSION COMPLETE -->
+        <div class="slide" data-hub="false">
+            <div class="glass-panel" style="padding: 80px 50px;">
+                <i class="fa-solid fa-shield-check" style="font-size: 7rem; color: var(--correct); margin-bottom: 25px; filter: drop-shadow(0 0 30px var(--correct)); animation: popIn 0.8s ease-out;"></i>
+                <h1 style="font-size: 5.5rem; color: var(--correct); line-height: 1.1;">LEVEL CLEARED</h1>
+                <p style="font-size: 1.6rem; color: #a3a3a3; margin-bottom: 40px;">Exceptional work today, <span class="dyn-name">Champion</span>!</p>
+                
+                <div style="display: flex; gap: 25px; justify-content: center; flex-wrap: wrap;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; border: 1px solid var(--glass-border); width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                        <i class="fa-solid fa-trophy" style="font-size: 2.5rem; color: var(--brand-main); margin-bottom: 15px;"></i>
+                        <h3 style="color: #fff; font-size: 1.3rem;">ENGLISH SKILLS</h3>
+                        <p style="font-size: 1.1rem; margin:0;">Adjectives<br>Superlatives</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; border: 1px solid var(--glass-border); width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                        <i class="fa-solid fa-bolt" style="font-size: 2.5rem; color: var(--brand-main); margin-bottom: 15px;"></i>
+                        <h3 style="color: #fff; font-size: 1.3rem;">AUTONOMY</h3>
+                        <p style="font-size: 1.1rem; margin:0;">Giving Opinions<br>Describing People</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER CONTROLS -->
+    <div class="progress-bar"></div>
+    <div class="footer" id="main-footer">
+        <button class="nav-btn" id="prev-btn" onclick="window.prevSlide()" disabled><i class="fa-solid fa-chevron-left"></i> BACK</button>
+        <div style="display: flex; align-items: center; gap: 25px;">
+            <div id="step-id" style="color: white; font-family: var(--font-code); font-size: 1.2rem; letter-spacing: 2px; font-weight: 700;">PAGE <span style="color: var(--brand-main); font-size: 1.4rem;">1</span> / 26</div>
+            <button class="nav-btn next" id="next-btn" onclick="window.nextSlide()" style="display: flex;">NEXT <i class="fa-solid fa-chevron-right" style="margin-left: 5px;"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // === DICTIONARY DATA ===
+        const vocabData = {
+            'tall': { word: 'Tall', phonetic: '/tɔːl/', def: 'Higher than average.', context: 'Tim is really tall.', speak: 'Who is the tallest in your family?' },
+            'strong': { word: 'Strong', phonetic: '/strɔːŋ/', def: 'Having a lot of physical power.', context: 'I am the strongest.', speak: 'Who is the strongest person you know?' },
+            'fast': { word: 'Fast', phonetic: '/fæst/', def: 'Moving quickly.', context: 'I was the fastest!', speak: 'Are you a fast runner?' }
+        };
+
+        let studentName = "Champion";
+
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const currentStepEl = document.getElementById('step-id');
+        const progressBar = document.querySelector('.progress-bar');
+        
+        function update() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+            if(prevBtn) prevBtn.disabled = currentSlide === 0;
+            if(currentSlide === slides.length - 1) { if(nextBtn) nextBtn.style.display = 'none'; } 
+            else { if(nextBtn) nextBtn.style.display = 'flex'; }
+
+            if(currentStepEl) currentStepEl.innerHTML = `PAGE <span style="color: var(--brand-main);">${currentSlide + 1}</span> / ${slides.length}`;
+            if(progressBar) progressBar.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+            
+            if(nextBtn) nextBtn.classList.remove('pulsing');
+
+            // Handle Iframes
+            slides.forEach((s, i) => {
+                const iframe = s.querySelector('.video-wrapper iframe');
+                if (iframe) {
+                    if (i === currentSlide) {
+                        if (!iframe.src || iframe.src === 'about:blank' || iframe.src === window.location.href) {
+                            iframe.src = iframe.getAttribute('data-src');
+                        }
+                    } else { iframe.src = ''; }
+                }
+            });
+        }
+
+        window.unlockNextManual = function() {
+            const nextButton = document.getElementById('next-btn');
+            if(nextButton) nextButton.classList.add('pulsing');
+        };
+        
+        window.nextSlide = function() { if(currentSlide < slides.length - 1) { currentSlide++; update(); } };
+        window.prevSlide = function() { if(currentSlide > 0) { currentSlide--; update(); } };
+
+        window.saveNameAndStart = () => {
+            const input = document.getElementById('s-name');
+            if(input && input.value.trim() !== '') studentName = input.value.trim();
+            document.querySelectorAll('.dyn-name').forEach(el => el.innerText = studentName);
+            window.nextSlide();
+        };
+
+        window.genericCorrect = function(btn, correct, hubId) {
+            if(correct) {
+                document.getElementById(hubId).style.display = 'block';
+                window.unlockNextManual();
+            }
+        }
+
+        window.revealStarter = function(btn) {
+            btn.style.display = 'none';
+            const content = btn.nextElementSibling;
+            if(content && content.classList.contains('starter-content')) content.classList.add('active');
+        };
+
+        /* --- SMART DICT --- */
+        window.openDict = function(word) {
+            const data = vocabData[word.toLowerCase()];
+            if(!data) return;
+
+            document.getElementById('d-word').innerText = data.word.toUpperCase();
+            document.getElementById('d-phonetic').innerText = data.phonetic;
+            document.getElementById('d-def').innerText = data.def;
+            
+            const exEl = document.getElementById('v-example');
+            if (exEl) exEl.innerText = `"${data.context}"`;
+            
+            const qEl = document.getElementById('v-question');
+            if (qEl) qEl.innerText = data.speak || '';
+            
+            document.getElementById('dict-hub-container').style.display = 'block';
+            const mainContainer = document.getElementById('slides-container');
+            mainContainer.style.transform = 'scale(0.95) translateX(-2vw)';
+            
+            document.querySelectorAll('.sidebar-panel.open, .teacher-hud.open').forEach(p => p.classList.remove('open'));
+            document.getElementById('dict-panel').classList.add('right-open');
+        };
+
+        window.openBox = (el, word, nextBtnId) => {
+            el.classList.add('opened');
+            window.openDict(word);
+            if(nextBtnId) {
+                const btn = document.getElementById(nextBtnId);
+                if(btn) btn.style.display = 'inline-flex';
+            }
+        };
+
+        /* --- GRAMMAR SANDBOX --- */
+        window.switchGrammar = function(btn, sentence, label, sentenceId, certaintyId) {
+            let siblings = btn.parentElement.children;
+            for(let s of siblings) s.classList.remove('active');
+            btn.classList.add('active');
+            
+            const words = sentence.split(' ');
+            let formatted = words.map(w => {
+                if(w.includes('TALLER') || w.includes('THAN') || w.includes('THE') || w.includes('TALLEST') || w.includes('MORE') || w.includes('EXPENSIVE') || w.includes('MOST')) return `<span style="color:var(--brand-main);">${w}</span>`;
+                return w;
+            }).join(' ');
+
+            document.getElementById(sentenceId).innerHTML = formatted;
+            document.getElementById(certaintyId).innerText = label;
+        }
+
+        /* --- THE WEIGHING SCALE --- */
+        const scaleWords = [
+            {w: 'TALL (TALLEST)', t: 'SHORT'}, {w: 'BEAUTIFUL (THE MOST BEAUTIFUL)', t: 'LONG'}, 
+            {w: 'FAST (FASTEST)', t: 'SHORT'}, {w: 'EXPENSIVE (THE MOST EXPENSIVE)', t: 'LONG'},
+            {w: 'DANGEROUS (THE MOST DANGEROUS)', t: 'LONG'}, {w: 'SMALL (SMALLEST)', t: 'SHORT'}
+        ];
+        let currentScaleIndex = 0;
+        
+        window.weighItem = function(guessType) {
+            if(currentScaleIndex >= scaleWords.length) return;
+            const item = scaleWords[currentScaleIndex];
+            const display = document.getElementById('scale-display');
+            
+            if(guessType === item.t) {
+                const basket = document.getElementById(guessType === 'SHORT' ? 'basket-short' : 'basket-long');
+                const chip = document.createElement('div');
+                chip.className = 'scale-item-chip';
+                chip.innerText = item.w;
+                basket.appendChild(chip);
+                
+                currentScaleIndex++;
+                if(currentScaleIndex < scaleWords.length) {
+                    display.style.opacity = '0';
+                    setTimeout(() => {
+                        display.innerText = scaleWords[currentScaleIndex].w;
+                        display.style.opacity = '1';
+                    }, 200);
+                } else {
+                    display.innerText = "DONE!";
+                    display.style.color = "var(--correct)";
+                    document.getElementById('hub-scale').style.display = 'block';
+                    window.unlockNextManual();
+                }
+            } else {
+                display.style.color = "var(--incorrect)";
+                display.style.animation = 'shake 0.4s';
+                setTimeout(() => { display.style.color = "var(--brand-main)"; display.style.animation = ''; }, 400);
+            }
+        };
+
+        /* --- THE SUPERLATIVE AWARDS --- */
+        window.giveAward = function(card, categoryName) {
+            if (card.classList.contains('granted')) return;
+            
+            card.classList.add('granted');
+            document.getElementById('award-cat-name').innerText = categoryName;
+            document.getElementById('hub-awards').style.display = 'block';
+            window.awardStar(); 
+            window.unlockNextManual();
+        };
+
+        /* --- FACT CHECKER --- */
+        window.checkFact = function(btn, isCorrect, id) {
+            if (btn.parentElement.classList.contains('locked')) return;
+            
+            btn.parentElement.classList.add('locked');
+            const stamp = document.getElementById('sm-' + id);
+            
+            if(isCorrect) {
+                stamp.className = 'stamp-mark show-verified';
+                stamp.innerText = 'VERIFIED';
+                window.awardStar();
+            } else {
+                stamp.className = 'stamp-mark show-fake';
+                stamp.innerText = 'FAKE NEWS';
+            }
+
+            if (id === 1) {
+                setTimeout(() => { document.getElementById('fc-2').style.display = 'block'; }, 1000);
+            } else {
+                setTimeout(() => { document.getElementById('hub-fc').style.display = 'block'; window.unlockNextManual(); }, 1000);
+            }
+        }
+
+        /* --- THE PODIUM (WITH MOBILE FALLBACK) --- */
+        let podiumRanked = 0;
+        let selectedFoodMobile = null;
+
+        window.dragStart = function(ev) { 
+            ev.dataTransfer.setData("text", ev.target.id); 
+            selectedFoodMobile = ev.target;
+        };
+        window.allowDrop = function(ev) { ev.preventDefault(); };
+        window.dropPodium = function(ev) {
+            ev.preventDefault();
+            let data = ev.dataTransfer.getData("text");
+            let el = document.getElementById(data);
+            
+            if (el && ev.target.classList.contains('podium-drop') && ev.target.children.length === 0) {
+                ev.target.appendChild(el);
+                el.classList.add('placed');
+                el.setAttribute('draggable', false);
+                ev.target.style.border = 'none';
+                el.style.borderColor = 'transparent';
+
+                podiumRanked++;
+                if(podiumRanked === 3) {
+                    document.getElementById('hub-podium').style.display = 'block';
+                    window.unlockNextManual();
+                }
+            }
+        };
+
+        window.selectFoodMobile = function(el) {
+            if (el.classList.contains('placed')) return;
+            document.querySelectorAll('.food-drag').forEach(f => f.style.borderColor = 'var(--glass-border)');
+            el.style.borderColor = 'var(--brand-main)';
+            selectedFoodMobile = el;
+        };
+        window.clickDropMobile = function(dz) {
+            if (selectedFoodMobile && dz.children.length === 0) {
+                dz.appendChild(selectedFoodMobile);
+                selectedFoodMobile.classList.add('placed');
+                selectedFoodMobile.style.borderColor = 'transparent';
+                selectedFoodMobile.setAttribute('draggable', false);
+                dz.style.border = 'none';
+                selectedFoodMobile = null;
+                
+                podiumRanked++;
+                if(podiumRanked === 3) {
+                    document.getElementById('hub-podium').style.display = 'block';
+                    window.unlockNextManual();
+                }
+            }
+        };
+
+        /* --- SYNTAX BUILDER --- */
+        window.buildState = {};
+        window.moveWord = function(chip, dzId, targetArrayStr) {
+            if(chip.classList.contains('used')) return;
+            const targetArray = targetArrayStr.split(',');
+            const word = chip.innerText;
+            const dz = document.getElementById(dzId);
+            const newChip = document.createElement('div');
+            newChip.className = 'word-chip'; 
+            newChip.style.background = 'var(--brand-main)';
+            newChip.style.color = '#000';
+            newChip.innerText = word;
+            if (!chip.id) chip.id = 'chip_' + Math.random().toString(36).substr(2, 9);
+            newChip.dataset.sourceId = chip.id;
+            
+            newChip.onclick = function() {
+                if(dz.classList.contains('success')) return;
+                dz.removeChild(this); document.getElementById(this.dataset.sourceId).classList.remove('used');
+                const idx = window.buildState[dzId].lastIndexOf(this.innerText);
+                if(idx !== -1) window.buildState[dzId].splice(idx, 1);
+            };
+            
+            dz.appendChild(newChip); chip.classList.add('used');
+            if(!window.buildState[dzId]) window.buildState[dzId] = [];
+            window.buildState[dzId].push(word);
+
+            if(window.buildState[dzId].length === targetArray.length) {
+                if(JSON.stringify(window.buildState[dzId]) === JSON.stringify(targetArray)) {
+                    dz.classList.add('success'); 
+                    Array.from(dz.children).forEach(c => { c.style.background = 'var(--correct)'; c.style.color = '#000'; c.style.cursor = 'default'; });
+                    document.getElementById('hub-syn').style.display = 'block';
+                    window.unlockNextManual();
+                } else {
+                    dz.style.borderColor = 'var(--incorrect)'; dz.style.animation = 'shake 0.4s';
+                    setTimeout(() => { dz.innerHTML = ''; dz.style.borderColor = 'rgba(255,255,255,0.2)'; dz.style.animation = ''; window.buildState[dzId] = []; chip.parentElement.querySelectorAll('.word-chip').forEach(c => c.classList.remove('used')); }, 1000);
+                }
+            }
+        }
+
+        /* --- RADIO BROADCAST --- */
+        window.sendRadio = function(btn, isCorrect) {
+            const container = document.getElementById('radio-opts');
+            if (container.classList.contains('locked')) return;
+
+            if (isCorrect) {
+                btn.classList.add('sent');
+                btn.style.backgroundColor = 'var(--brand-main)';
+                btn.style.color = '#000';
+                container.classList.add('locked');
+                Array.from(container.children).forEach(c => { if(c !== btn) c.style.opacity = '0.3'; });
+                
+                document.getElementById('p_radio').style.display = 'block';
+                window.unlockNextManual();
+            } else {
+                btn.style.borderColor = 'var(--incorrect)';
+                btn.style.animation = 'shake 0.4s';
+                setTimeout(() => { btn.style.borderColor = 'var(--glass-border)'; btn.style.animation = ''; }, 400);
+            }
+        }
+
+        /* --- ACTION SPINNER --- */
+        let spinnerOptions = [
+            "WHO IS THE TALLEST IN YOUR FAMILY?", 
+            "WHAT IS THE MOST BEAUTIFUL CITY?", 
+            "WHO IS THE BEST COOK?", 
+            "WHAT IS THE MOST EXPENSIVE THING YOU HAVE?", 
+            "WHO IS THE STRONGEST PERSON YOU KNOW?"
+        ];
+        
+        window.spinSlot = function() {
+            if(spinnerOptions.length === 0) { 
+                document.getElementById('slot-display').innerText = "DONE!"; 
+                return; 
+            }
+            
+            const display = document.getElementById('slot-display');
+            let count = 0;
+            const btn = event.target;
+            btn.disabled = true;
+            display.style.color = "#fff";
+            display.style.transform = "scale(1)";
+
+            const interval = setInterval(() => {
+                display.innerText = spinnerOptions[Math.floor(Math.random() * spinnerOptions.length)];
+                count++;
+                if(count > 15) {
+                    clearInterval(interval);
+                    
+                    const selectedIndex = Math.floor(Math.random() * spinnerOptions.length);
+                    const selectedQuestion = spinnerOptions[selectedIndex];
+                    spinnerOptions.splice(selectedIndex, 1); 
+                    
+                    display.innerText = selectedQuestion;
+                    display.style.color = "var(--brand-main)";
+                    display.style.transform = "scale(1.1)";
+                    document.getElementById('p_slot').style.display = 'block';
+                    btn.disabled = false;
+                    window.unlockNextManual();
+                }
+            }, 80);
+        }
+
+        /* --- PHONE SIMULATOR --- */
+        window.advanceChat = function(btn, isCorrect, optsId, dotId, promptId) {
+            if(!isCorrect) {
+                btn.style.backgroundColor = 'var(--incorrect)';
+                btn.style.color = '#fff';
+                btn.style.borderColor = 'var(--incorrect)';
+                btn.style.animation = 'shake 0.4s';
+                setTimeout(() => {
+                    btn.style.backgroundColor = '#1e293b';
+                    btn.style.color = '#fff';
+                    btn.style.borderColor = 'rgba(255,255,255,0.1)';
+                    btn.style.animation = '';
+                }, 800);
+                return;
+            }
+            const text = btn.innerText;
+            const optsContainer = document.getElementById(optsId);
+            const chatArea = optsContainer.previousElementSibling;
+            optsContainer.innerHTML = '';
+            
+            const sentMsg = document.createElement('div');
+            sentMsg.className = 'phone-msg sent';
+            sentMsg.style.display = 'block';
+            sentMsg.innerText = text;
+            
+            const typingDot = document.getElementById(dotId);
+            if(typingDot) { chatArea.insertBefore(sentMsg, typingDot); typingDot.style.display = 'none'; } else { chatArea.appendChild(sentMsg); }
+            chatArea.scrollTop = chatArea.scrollHeight;
+            if(promptId) setTimeout(() => { document.getElementById(promptId).style.display = 'block'; window.unlockNextManual(); }, 500); 
+        };
+
+        /* --- WOULD YOU RATHER --- */
+        const wyrData = [
+            {
+                c1: { icon: 'fa-bolt', text: 'Fastest in the world.' },
+                c2: { icon: 'fa-brain', text: 'Smartest in the world.' }
+            },
+            {
+                c1: { icon: 'fa-pizza-slice', text: 'Best pizza every day.' },
+                c2: { icon: 'fa-plane', text: 'Travel for free.' }
+            },
+            {
+                c1: { icon: 'fa-microphone', text: 'Famous singer.' },
+                c2: { icon: 'fa-clapperboard', text: 'Best actor in Hollywood.' }
+            }
+        ];
+        let wyrIndex = 0;
+
+        window.answerWyr = function(choice) {
+            const container = document.getElementById('wyr-container');
+            if(container.classList.contains('locked')) return;
+            
+            document.getElementById('wyr-card-' + choice).classList.add('selected');
+            container.classList.add('locked');
+            
+            document.getElementById('hub-wyr').style.display = 'block';
+            
+            if (wyrIndex >= wyrData.length - 1) {
+                document.getElementById('wyr-next-btn').innerText = 'NEXT';
+            } else {
+                document.getElementById('wyr-next-btn').innerText = 'NEXT QUESTION';
+            }
+            window.unlockNextManual();
+        }
+
+        window.nextWyr = function() {
+            if (wyrIndex >= wyrData.length - 1) {
+                window.nextSlide();
+                return;
+            }
+            wyrIndex++;
+            
+            const container = document.getElementById('wyr-container');
+            document.getElementById('wyr-card-1').classList.remove('selected');
+            document.getElementById('wyr-card-2').classList.remove('selected');
+            container.classList.remove('locked');
+            document.getElementById('hub-wyr').style.display = 'none';
+            
+            container.style.opacity = 0;
+            setTimeout(() => {
+                document.getElementById('wyr-icon-1').className = 'fa-solid ' + wyrData[wyrIndex].c1.icon;
+                document.getElementById('wyr-text-1').innerText = wyrData[wyrIndex].c1.text;
+                document.getElementById('wyr-icon-2').className = 'fa-solid ' + wyrData[wyrIndex].c2.icon;
+                document.getElementById('wyr-text-2').innerText = wyrData[wyrIndex].c2.text;
+                container.style.opacity = 1;
+            }, 300);
+        }
+
+        /* --- STAND YOUR GROUND --- */
+        window.selectAgree = function(btn) {
+            const container = document.getElementById('agree-box');
+            if(container.classList.contains('locked')) return;
+
+            btn.classList.add('selected');
+            container.classList.add('locked');
+            
+            document.getElementById('hub-agree').style.display = 'block';
+            window.unlockNextManual();
+        }
+
+        /* --- TOPIC CARDS --- */
+        window.flipTopic = function(card, question, starter) {
+            if(card.classList.contains('flipped')) return;
+            card.classList.add('flipped');
+            card.querySelector('.t-back').innerText = question;
+            document.getElementById('cards-starter-phrase').innerText = `"${starter}"`;
+            document.getElementById('p_cards').style.display = 'block';
+            window.unlockNextManual();
+        };
+
+        /* --- TEACHER TOOLS & ALERTS --- */
+        window.toggleFullscreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        };
+
+        let hudTimerInt; let hudTime = 60;
+        window.startTimer = function() {
+            clearInterval(hudTimerInt); hudTime = 60;
+            const tEl = document.getElementById('hud-timer');
+            tEl.innerText = "00:60"; tEl.style.color = "var(--brand-main)";
+            hudTimerInt = setInterval(() => {
+                hudTime--; tEl.innerText = `00:${hudTime < 10 ? '0'+hudTime : hudTime}`;
+                if(hudTime <= 10) tEl.style.color = "var(--incorrect)";
+                if(hudTime <= 0) clearInterval(hudTimerInt);
+            }, 1000);
+        };
+        
+        window.toggleCorrectionMode = function() { document.body.classList.toggle('correction-mode'); };
+        
+        window.showAlert = function(msg, type) {
+            const overlay = document.getElementById('alert-screen');
+            const textEl = document.getElementById('alert-msg');
+            textEl.innerHTML = msg; textEl.className = 'alert-text alert-' + type;
+            overlay.classList.add('show');
+            setTimeout(() => { overlay.classList.remove('show'); }, 2500);
+        };
+        
+        let starCount = 0;
+        window.awardStar = function() { 
+            starCount++; 
+            document.getElementById('hud-stars').innerText = '⭐ ' + starCount; 
+            window.showAlert('⭐<br>+1 POINT!', 'star'); 
+        };
+
+        window.toggleSidebar = function(id) {
+            let el = document.getElementById(id);
+            if (!el) return;
+            const mainContainer = document.getElementById('slides-container');
+            
+            if(el.classList.contains('open') || el.classList.contains('right-open')) {
+                el.classList.remove('open', 'right-open');
+                mainContainer.style.transform = 'scale(1) translateX(0)';
+            } else {
+                document.querySelectorAll('.sidebar-panel, .teacher-hud').forEach(p => p.classList.remove('open', 'right-open'));
+                
+                if (id === 'teacher-hud') {
+                    el.classList.add('open');
+                    mainContainer.style.transform = 'scale(0.95) translateX(2vw)';
+                } else {
+                    el.classList.add('right-open');
+                    mainContainer.style.transform = 'scale(0.95) translateX(-2vw)';
+                }
+            }
+        };
+
+        window.onload = () => { update(); };
+    </script>
+</body>
+</html>
